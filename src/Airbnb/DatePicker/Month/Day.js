@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import dayFactory from 'react-toolbox/lib/core/components/DatePicker/Day';
+import dayFactory from 'react-toolbox-core/lib/components/DatePicker/Day';
 
 const Day = dayFactory({
   DayNode: styled.span`

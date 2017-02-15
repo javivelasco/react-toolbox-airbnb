@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import monthFactory from 'react-toolbox/lib/core/components/DatePicker/Month';
+import monthFactory from 'react-toolbox-core/lib/components/DatePicker/Month';
 import Weekday from './Weekday';
 import Day from './Day';
 

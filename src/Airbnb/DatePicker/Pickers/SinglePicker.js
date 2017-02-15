@@ -1,4 +1,4 @@
-import singlePickerFactory from 'react-toolbox/lib/core/components/DatePicker/SinglePicker';
+import singlePickerFactory from 'react-toolbox-core/lib/components/DatePicker/SinglePicker';
 import MonthsWrapper from './MonthsWrapper';
 import Month from '../Month';
 

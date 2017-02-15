@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import datePickerFactory from 'react-toolbox/lib/core/components/DatePicker/DatePicker';
+import datePickerFactory from 'react-toolbox-core/lib/components/DatePicker/DatePicker';
 import { NextNode, PrevNode } from './Navigation';
 import { RangePicker, SinglePicker } from './Pickers';
 import Month from './Month';

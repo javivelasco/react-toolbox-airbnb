@@ -1,4 +1,4 @@
-import rangePickerFactory from 'react-toolbox/lib/core/components/DatePicker/RangePicker';
+import rangePickerFactory from 'react-toolbox-core/lib/components/DatePicker/RangePicker';
 import MonthsWrapper from './MonthsWrapper';
 import Month from '../Month';
 
