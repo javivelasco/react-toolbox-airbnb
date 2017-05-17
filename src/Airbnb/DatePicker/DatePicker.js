@@ -23,12 +23,15 @@ const DatePicker = datePickerFactory({
   SinglePicker,
 });
 
-function passthrough(props, name) {
+function passthrough(props, name, instance) {
   switch (name) {
     case 'Month':
     case 'RangePicker':
     case 'SinglePicker':
-      return { numberOfMonths: props.numberOfMonths };
+      return { 
+        numberOfMonths: props.numberOfMonths, 
+        viewDate: instance.state.viewDate,
+      };
     default:
       return {};
   }

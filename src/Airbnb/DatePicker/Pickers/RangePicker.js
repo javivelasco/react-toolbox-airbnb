@@ -9,9 +9,14 @@ const RangePicker = rangePickerFactory({
 });
 
 function passthrough(props, name) {
-  return name === 'MonthsWrapper'
-    ? { numberOfMonths: props.numberOfMonths }
-    : {};
+  if (name === 'MonthsWrapper') {
+    return {
+      numberOfMonths: props.numberOfMonths, 
+      viewDate: props.viewDate,
+    }
+  }
+
+  return {};
 }
 
 export default RangePicker;

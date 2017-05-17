@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import monthFactory from 'react-toolbox-core/lib/components/DatePicker/Month';
+import styled from 'styled-components';
 import Weekday from './Weekday';
 import Day from './Day';
 
@@ -31,10 +31,6 @@ const Month = monthFactory({
   `,
   MonthWrapper: styled.div`
     padding: 10px 15px;
-    width: calc(100% / ${props => props.numberOfMonths});
-    position: absolute;
-    left: 0;
-    top: 0;
   `,
   Weekday: styled(Weekday)`
     display: inline-block;

@@ -1,39 +1,16 @@
-import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
-import throttle from 'lodash.throttle';
 import LeftArrow from './LeftArrow';
 import RightArrow from './RightArrow';
 
-export const NextNode = throttleClick(
-  styled(RightArrow)`
-    right: 18px;
-    ${navigation}
-  `
-);
+export const NextNode = styled(RightArrow)`
+  right: 18px;
+  ${navigation}
+`;
 
-export const PrevNode = throttleClick(
-  styled(LeftArrow)`
-    left: 18px;
-    ${navigation}
-  `
-);
-
-function throttleClick(DecoratedComponent) {
-  return class Navigable extends Component {
-    handleClick = throttle((...args) => {
-      this.props.onClick(...args);
-    }, 200);
-
-    render() {
-      return (
-        <DecoratedComponent 
-          {...this.props}
-          onClick={this.handleClick}
-        />
-      )
-    }
-  }
-}
+export const PrevNode = styled(LeftArrow)`
+  left: 18px;
+  ${navigation}
+`;
 
 function navigation(props) {
   return css`

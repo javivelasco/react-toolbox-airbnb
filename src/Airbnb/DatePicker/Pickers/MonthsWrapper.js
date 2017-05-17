@@ -1,21 +1,11 @@
-import React, { cloneElement, Children, Component } from 'react';
+import React, { Children, Component } from 'react';
+import { differenceInCalendarMonths } from 'date-fns';
 import { TransitionMotion, spring } from 'react-motion';
-import throttle from 'lodash.throttle';
 import styled from 'styled-components';
 
-const customPreset = { stiffness: 180, damping: 23 };
+const customPreset = { stiffness: 170, damping: 26 };
 const RIGHT = 'right';
 const LEFT = 'left';
-
-const MonthsWrapperNode = styled.div`
-  display: flex;
-  align-items: top;
-  align-content: top;
-  flex-direction: row;
-  flex-wrap: wrap;
-  transition: height 120ms ease-in-out;
-  width: 100%;
-`;
 
 class MonthsWrapper extends Component {
   componentDidMount() {
@@ -25,13 +15,17 @@ class MonthsWrapper extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { children: nextChildren } = nextProps;
-    const { children } = this.props;
-    const nextViewDate = firstChildViewDate(nextChildren);
-    const viewDate = firstChildViewDate(children);
+    const { viewDate } = this.props;
+    const { viewDate: nextViewDate } = nextProps;
     if (viewDate.getTime() !== nextViewDate.getTime()) {
-      this.direction = viewDate.getTime() < nextViewDate.getTime() ? RIGHT : LEFT;
+      this.direction = viewDate.getTime() < nextViewDate.getTime() 
+        ? RIGHT 
+        : LEFT;
     }
+  }
+
+  componentWillUpdate() {
+    this.childrenRefs = [];
   }
 
   componentDidUpdate(prevProps) {
@@ -50,75 +44,108 @@ class MonthsWrapper extends Component {
     this.childrenRefs[idx] = node;
   };
 
-  getChildHeight = throttle((fn) => {
+  getChildHeight = (fn) => {
     requestAnimationFrame(() => {
-      const { numberOfMonths } = this.props;
       const items = this.childrenRefs
         .map(child => child && child.getBoundingClientRect())
         .map(size => size && size.height)
         .filter(item => !!item);
 
       const itemsSlice = this.direction === RIGHT
-        ? items.slice(items.length - numberOfMonths)
-        : items.slice(0, numberOfMonths);
+        ? items.slice(items.length - this.props.numberOfMonths)
+        : items.slice(0, this.props.numberOfMonths);
 
       fn(itemsSlice.reduce((result, item) => (item && item > result) ? item : result, 0));
     });
-  }, 200)
-
-  willEnter = () => {
-    return {
-      transform: this.direction === RIGHT 
-        ? this.props.numberOfMonths * 100
-        : -100,
-    };
   };
 
-  willLeave = () => {
-    return {
-      transform: this.direction === RIGHT 
-        ? spring(-100, customPreset) 
-        : spring(this.props.numberOfMonths * 100, customPreset),
-    };
-  };
+  willEnter = (child) => ({
+    transform: this.direction === RIGHT 
+      ? this.props.numberOfMonths * 100
+      : -100,
+  });
+
+  willLeave = (config) => ({
+    transform: spring(
+      differenceInCalendarMonths(
+        config.data.child.props.viewDate, 
+        this.props.viewDate,
+      ) * 100, 
+      customPreset,
+    )
+  });
+
+  getChildStyles = (child, index) => ({
+    key: child.key,
+    data: { child }, 
+    style: { 
+      transform: spring(
+        differenceInCalendarMonths(
+          child.props.viewDate, 
+          this.props.viewDate,
+        ) * 100, 
+      )
+    },
+  });
+
+  interpolateStyles = interpolatedStyles => (
+    <MonthsWrapperNode style={{ height: this.state.wrapperHeight }}>
+      {interpolatedStyles.map(this.renderChild)}
+    </MonthsWrapperNode>
+  );
+
+  renderChild = (config, idx) => (
+    <MonthPositioner
+      key={config.key}
+      innerRef={node => this.handleRef(node, idx)}
+      numberOfMonths={this.props.numberOfMonths}
+      style={{ transform: `translate3d(${config.style.transform}%, 0, 0)` }}
+    >
+      <AnimateOptimizer transform={config.style.transform}>
+        {config.data.child}
+      </AnimateOptimizer>
+    </MonthPositioner>
+  );
 
   render() {
-    this.childrenRefs = [];
-    const { children, ...rest } = this.props;
     return (
       <TransitionMotion
+        styles={Children.toArray(this.props.children).map(this.getChildStyles)}
         willEnter={this.willEnter}
         willLeave={this.willLeave}
-        didLeave={this.didLeave}
-        styles={Children.toArray(children).map((child, index) => {
-          const { viewDate } = child.props;
-          return { 
-            key: `${viewDate.getFullYear()}-${viewDate.getMonth()}`,
-            data: { child }, 
-            style: { transform: spring(index * 100, customPreset) },
-          };
-        })}
       >
-        {interpolatedStyles => (
-          <MonthsWrapperNode {...rest} style={{ height: this.state.wrapperHeight }}>
-            {interpolatedStyles.map((config, idx) => {
-              return cloneElement(config.data.child, {
-                innerRef: node => this.handleRef(node, idx),
-                style: {
-                  transform: `translateX(${config.style.transform}%)`,
-                }
-              });
-            })}
-          </MonthsWrapperNode>
-        )}
+        {this.interpolateStyles}
       </TransitionMotion>
     );
   }
 }
 
-function firstChildViewDate(children) {
-  const child = Children.toArray(children)[0];
-  return child.props.viewDate;
+const MonthsWrapperNode = styled.div`
+  align-content: top;
+  align-items: top;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  transition: height 120ms ease-in-out;
+  width: 100%;
+`;
+
+const MonthPositioner = styled.div`
+  background: white;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: calc(100% / ${props => props.numberOfMonths});
+`
+
+class AnimateOptimizer extends Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps.transform === this.props.transform
+  }
+  
+  render() {
+    return Children.only(this.props.children);
+  }
 }
 
 export default MonthsWrapper;

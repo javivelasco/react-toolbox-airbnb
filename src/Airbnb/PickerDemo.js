@@ -1,9 +1,13 @@
+import * as C from 'react-toolbox-core/lib/components/DatePicker/constants';
 import React, { Component } from 'react';
 import DatePicker from './DatePicker';
+import Input from './Input';
 
 class PickerDemo extends Component {
   state = {
-    value: null,
+    focusedInput: null,
+    highlighted: { from: null, to: null },
+    value: { from: null, to: null },
   };
 
   componentWillMount() {
@@ -14,6 +18,14 @@ class PickerDemo extends Component {
     this.setState({ value });
   };
 
+  handleHighlightedChange = (highlighted) => {
+    this.setState({ highlighted });
+  };
+  
+  handleFocusedInputChange = (focusedInput) => {
+    this.setState({ focusedInput });
+  };
+
   isDisabled = date => {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -21,15 +33,45 @@ class PickerDemo extends Component {
     return date.getTime() < today.getTime()
   };
 
+  handleStartInputFocus = () => {
+    this.setState({ focusedInput: C.START_DATE });
+  };
+
+  handleEndInputFocus = () => {
+    this.setState({ focusedInput: C.END_DATE });
+  };
+
+  format(date) {
+    if (!date) return "";
+    return date.toISOString();
+  }
+
   render() {
     return (
-      <DatePicker
-        numberOfMonths={2}
-        isDayDisabled={this.isDisabled}
-        onChange={this.handleChange}
-        selected={this.state.value}
-        viewDate={new Date()}
-      />
+      <div>
+        <Input
+          value={this.format(this.state.value.from)}
+          onFocus={this.handleStartInputFocus}
+          active={this.state.focusedInput === C.START_DATE}
+          readOnly
+        />
+        <Input
+          value={this.format(this.state.value.to)}
+          onFocus={this.handleEndInputFocus}
+          active={this.state.focusedInput === C.END_DATE}
+          readOnly
+        />
+        <DatePicker
+          focusedInput={this.state.focusedInput}
+          highlighted={this.state.highlighted}
+          onChange={this.handleChange}
+          onFocusedInputChange={this.handleFocusedInputChange}
+          onHighlightedChange={this.handleHighlightedChange}
+          selected={this.state.value}
+          sundayFirstDayOfWeek
+          viewDate={new Date(2017, 11, 1)}
+        />
+      </div>
     );
   }
 }
