@@ -4344,9 +4344,9 @@ react-scripts@^0.9.5:
   optionalDependencies:
     fsevents "1.0.17"
 
-react-toolbox-core@0.0.0-alpha.3:
-  version "0.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/react-toolbox-core/-/react-toolbox-core-0.0.0-alpha.3.tgz#2a9d4f8372b05e0eb1e9884383c37777f1eb99d0"
+react-toolbox-core@0.0.0-alpha.9:
+  version "0.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/react-toolbox-core/-/react-toolbox-core-0.0.0-alpha.9.tgz#e12d4b5a4a608803f87f753268e81f57481f804b"
   dependencies:
     date-fns "^1.28.4"
     inline-style-prefixer "^3.0.3"

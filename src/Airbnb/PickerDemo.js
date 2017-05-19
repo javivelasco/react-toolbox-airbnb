@@ -1,4 +1,3 @@
-import * as C from 'react-toolbox-core/lib/components/DatePicker/constants';
 import React, { Component } from 'react';
 import DatePicker from './DatePicker';
 import Input from './Input';
@@ -34,11 +33,11 @@ class PickerDemo extends Component {
   };
 
   handleStartInputFocus = () => {
-    this.setState({ focusedInput: C.START_DATE });
+    this.setState({ focusedInput: 'START_DATE' });
   };
 
   handleEndInputFocus = () => {
-    this.setState({ focusedInput: C.END_DATE });
+    this.setState({ focusedInput: 'END_DATE' });
   };
 
   format(date) {
@@ -52,13 +51,13 @@ class PickerDemo extends Component {
         <Input
           value={this.format(this.state.value.from)}
           onFocus={this.handleStartInputFocus}
-          active={this.state.focusedInput === C.START_DATE}
+          active={this.state.focusedInput === 'START_DATE'}
           readOnly
         />
         <Input
           value={this.format(this.state.value.to)}
           onFocus={this.handleEndInputFocus}
-          active={this.state.focusedInput === C.END_DATE}
+          active={this.state.focusedInput === 'END_DATE'}
           readOnly
         />
         <DatePicker
